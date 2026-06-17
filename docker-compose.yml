@@ -21,7 +21,7 @@ services:
       - MYSQL_DATABASE=B-LA_VIREAK-db
       - MYSQL_ROOT_PASSWORD=Hello@123
     ports:
-      - "3306:3306"
+      - "3307:3306"
     networks:
       - devops-network
     volumes:
