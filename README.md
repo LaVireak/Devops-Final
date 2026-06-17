@@ -96,3 +96,54 @@ D:\tools\apache-maven-3.9.9\bin\mvn.cmd test
 | **POST** | `/batch/create` | Batch create multiple profiles |
 | **GET** | `/batch/pdf` | Download ZIP containing all PDFs |
 | **GET** | `/verify/{uuid}` | Public card verification portal |
+
+---
+
+## DevOps Deployment Reference
+
+### 1. Docker Compose Services
+Manage the containerized application using [docker-compose.yml](docker-compose.yml):
+
+* **Web Server Container (`web-server`)**:
+  * Runs Java Spring Boot behind an NGINX reverse proxy.
+  * Web Access: `http://localhost:8443`
+  * SSH Access: `ssh root@localhost -p 2222` (Password: `Hello@123`)
+* **Database Container (`B-LA_VIREAK-db`)**:
+  * Runs MySQL 8.0.
+  * Exposed Port: `3307` on the host.
+  * Credentials: `root` / `Hello@123`
+* **Database Manager Container (`phpmyadmin`)**:
+  * Runs phpMyAdmin UI.
+  * Exposed Port: `8081` on the host (binds to `0.0.0.0` to allow remote LAN access).
+  * Web Access: `http://localhost:8081` (Remote: `http://<your-ip>:8081`)
+
+To start the services:
+```bash
+docker compose up -d --build
+```
+
+### 2. Ansible Playbook
+Deploy or update the application code inside the running web-server container using Ansible:
+
+* **Playbook**: [playbook.yml](playbook.yml)
+* **Hosts Inventory**: [hosts.ini](hosts.ini)
+
+Run the playbook to pull code, build, and restart the Spring Boot jar inside the container:
+```bash
+ansible-playbook -i hosts.ini playbook.yml
+```
+
+### 3. Kubernetes Manifests
+Deploy the entire stack to a local/cloud Kubernetes cluster using [kubernetes.yaml](kubernetes.yaml):
+
+```bash
+# Create the devops-idcard namespace and deploy all pods/services
+kubectl apply -f kubernetes.yaml
+
+# Check deployed resources
+kubectl get all -n devops-idcard
+```
+* **Endpoints**:
+  * Web UI: `http://localhost:30443`
+  * SSH Daemon: `localhost:32222`
+
