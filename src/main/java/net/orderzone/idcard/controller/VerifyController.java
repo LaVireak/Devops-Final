@@ -1,6 +1,9 @@
 package net.orderzone.idcard.controller;
 
 import net.orderzone.idcard.dto.ProfileResponse;
+import net.orderzone.idcard.model.ProfileType;
+import net.orderzone.idcard.repository.ProfileRepository;
+import net.orderzone.idcard.repository.TemplateRepository;
 import net.orderzone.idcard.service.ProfileService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,13 +14,23 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class VerifyController {
 
     private final ProfileService profileService;
+    private final ProfileRepository profileRepository;
+    private final TemplateRepository templateRepository;
 
-    public VerifyController(ProfileService profileService) {
+    public VerifyController(ProfileService profileService,
+                            ProfileRepository profileRepository,
+                            TemplateRepository templateRepository) {
         this.profileService = profileService;
+        this.profileRepository = profileRepository;
+        this.templateRepository = templateRepository;
     }
 
     @GetMapping("/")
     public String home(Model model) {
+        model.addAttribute("totalProfiles", profileRepository.count());
+        model.addAttribute("studentCount", profileRepository.countByType(ProfileType.STUDENT));
+        model.addAttribute("employeeCount", profileRepository.countByType(ProfileType.EMPLOYEE));
+        model.addAttribute("templateCount", templateRepository.count());
         return "index";
     }
 

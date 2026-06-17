@@ -22,6 +22,9 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
     /** Find all profiles of a given type. */
     List<Profile> findByType(ProfileType type);
 
+    /** Count profiles of a given type. */
+    long countByType(ProfileType type);
+
     /** Look up a profile by its public UUID (used in QR code verification). */
     Optional<Profile> findByUuid(String uuid);
 
