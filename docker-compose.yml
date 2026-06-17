@@ -11,6 +11,8 @@ services:
       - SPRING_DATASOURCE_PASSWORD=Hello@123
     depends_on:
       - B-LA_VIREAK-db
+    volumes:
+      - ~/.m2:/root/.m2
     networks:
       - devops-network
 
