@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${pageTitle} + ' — ID Card Manager'">Profile Form</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h2>🪪 IDCard Manager</h2>
+            <p>Student &amp; Employee Cards</p>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a th:href="@{/}"><span class="icon">🏠</span> Dashboard</a></li>
+            <li><a th:href="@{/profiles}" class="active"><span class="icon">👤</span> Profiles</a></li>
+            <li><a th:href="@{/profiles/new}"><span class="icon">➕</span> New Profile</a></li>
+            <li><a th:href="@{/templates}"><span class="icon">🎨</span> Templates</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 th:text="${pageTitle}">Profile</h1>
+                <p>Fill in the details below to generate the ID card</p>
+            </div>
+            <a th:href="@{/profiles}" class="btn btn-outline">← Back to Profiles</a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Profile Information</h3>
+            </div>
+            <div class="card-body">
+                <form th:action="${formAction}" method="post"
+                      th:object="${profileRequest}" enctype="multipart/form-data">
+
+                    <div class="form-grid">
+                        <!-- Full Name -->
+                        <div class="form-group">
+                            <label class="form-label" for="fullName">Full Name *</label>
+                            <input id="fullName" type="text" class="form-control"
+                                   th:field="*{fullName}" placeholder="e.g. Sophea Chan" required/>
+                            <span class="form-error" th:if="${#fields.hasErrors('fullName')}"
+                                  th:errors="*{fullName}"></span>
+                        </div>
+
+                        <!-- Profile Type -->
+                        <div class="form-group">
+                            <label class="form-label" for="type">Profile Type *</label>
+                            <select id="type" class="form-control" th:field="*{type}" required>
+                                <option value="">-- Select Type --</option>
+                                <option th:each="t : ${profileTypes}"
+                                        th:value="${t.name()}"
+                                        th:text="${t.name()}">TYPE</option>
+                            </select>
+                            <span class="form-error" th:if="${#fields.hasErrors('type')}"
+                                  th:errors="*{type}"></span>
+                        </div>
+
+                        <!-- Department -->
+                        <div class="form-group">
+                            <label class="form-label" for="department">Department</label>
+                            <input id="department" type="text" class="form-control"
+                                   th:field="*{department}" placeholder="e.g. Engineering"/>
+                        </div>
+
+                        <!-- Title -->
+                        <div class="form-group">
+                            <label class="form-label" for="title">Title / Position</label>
+                            <input id="title" type="text" class="form-control"
+                                   th:field="*{title}" placeholder="e.g. Software Engineer"/>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email</label>
+                            <input id="email" type="email" class="form-control"
+                                   th:field="*{email}" placeholder="e.g. user@example.com"/>
+                            <span class="form-error" th:if="${#fields.hasErrors('email')}"
+                                  th:errors="*{email}"></span>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="form-group">
+                            <label class="form-label" for="phone">Phone</label>
+                            <input id="phone" type="text" class="form-control"
+                                   th:field="*{phone}" placeholder="e.g. +855 12 345 678"/>
+                        </div>
+
+                        <!-- Blood Group -->
+                        <div class="form-group">
+                            <label class="form-label" for="bloodGroup">Blood Group</label>
+                            <select id="bloodGroup" class="form-control" th:field="*{bloodGroup}">
+                                <option value="">-- Select --</option>
+                                <option value="A+">A+</option><option value="A-">A-</option>
+                                <option value="B+">B+</option><option value="B-">B-</option>
+                                <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                                <option value="O+">O+</option><option value="O-">O-</option>
+                            </select>
+                        </div>
+
+                        <!-- Date of Birth -->
+                        <div class="form-group">
+                            <label class="form-label" for="dateOfBirth">Date of Birth</label>
+                            <input id="dateOfBirth" type="date" class="form-control"
+                                   th:field="*{dateOfBirth}"/>
+                        </div>
+
+                        <!-- Issue Date -->
+                        <div class="form-group">
+                            <label class="form-label" for="issueDate">Issue Date</label>
+                            <input id="issueDate" type="date" class="form-control"
+                                   th:field="*{issueDate}"/>
+                        </div>
+
+                        <!-- Expiry Date -->
+                        <div class="form-group">
+                            <label class="form-label" for="expiryDate">Expiry Date</label>
+                            <input id="expiryDate" type="date" class="form-control"
+                                   th:field="*{expiryDate}"/>
+                        </div>
+
+                        <!-- Template -->
+                        <div class="form-group">
+                            <label class="form-label" for="templateId">Card Template</label>
+                            <select id="templateId" class="form-control" th:field="*{templateId}">
+                                <option value="">-- Default --</option>
+                                <option th:each="tpl : ${templates}"
+                                        th:value="${tpl.id}"
+                                        th:text="${tpl.name + ' (' + tpl.code + ')'}">Template</option>
+                            </select>
+                        </div>
+
+                        <!-- Barcode Type -->
+                        <div class="form-group">
+                            <label class="form-label" for="barcodeType">Barcode Type</label>
+                            <select id="barcodeType" class="form-control" th:field="*{barcodeType}">
+                                <option value="CODE_128">CODE-128</option>
+                                <option value="EAN_13">EAN-13</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Photo upload (only shown when editing) -->
+                    <div th:if="${profileId != null}" style="margin-top:20px;"
+                         class="form-group">
+                        <label class="form-label">Profile Photo (JPEG / PNG, max 5 MB)</label>
+                        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                            <img th:if="${profile?.photoUrl != null}"
+                                 th:src="${profile.photoUrl}"
+                                 alt="Current photo"
+                                 style="width:60px;height:72px;object-fit:cover;border-radius:8px;border:2px solid var(--border);"/>
+                            <input id="photoFile" type="file" accept="image/jpeg,image/png"
+                                   onchange="uploadPhoto(this)"
+                                   class="form-control" style="max-width:300px;"/>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:24px;display:flex;gap:12px;">
+                        <button type="submit" class="btn btn-primary">
+                            💾 <span th:text="${pageTitle == 'New Profile'} ? 'Create Profile' : 'Save Changes'">Save</span>
+                        </button>
+                        <a th:href="@{/profiles}" class="btn btn-outline">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script th:inline="javascript">
+    function uploadPhoto(input) {
+        const profileId = /*[[${profileId}]]*/ null;
+        if (!profileId || !input.files.length) return;
+        const formData = new FormData();
+        formData.append('file', input.files[0]);
+        fetch(`/profiles/${profileId}/photo`, { method: 'POST', body: formData })
+            .then(r => r.text())
+            .then(() => location.reload())
+            .catch(e => alert('Upload failed: ' + e));
+    }
+</script>
+</body>
+</html>

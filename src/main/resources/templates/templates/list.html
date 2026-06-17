@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Templates — ID Card Manager</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h2>🪪 IDCard Manager</h2>
+            <p>Student &amp; Employee Cards</p>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a th:href="@{/}"><span class="icon">🏠</span> Dashboard</a></li>
+            <li><a th:href="@{/profiles}"><span class="icon">👤</span> Profiles</a></li>
+            <li><a th:href="@{/profiles/new}"><span class="icon">➕</span> New Profile</a></li>
+            <li><a th:href="@{/templates}" class="active"><span class="icon">🎨</span> Templates</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1>Card Templates</h1>
+                <p>Manage color themes for ID cards</p>
+            </div>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+        <!-- Template Grid -->
+        <div class="profile-grid" style="margin-bottom:32px;">
+            <div th:each="tpl : ${templates}" class="template-card">
+                <div class="template-preview"
+                     th:style="'background:' + ${tpl.primaryColor}">
+                    <span th:text="${tpl.code}">CODE</span>
+                </div>
+                <div class="template-info">
+                    <h4 th:text="${tpl.name}">Template Name</h4>
+                    <p th:text="${tpl.organizationName}">Org</p>
+                    <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">
+                        <span class="swatch" th:style="'background:' + ${tpl.primaryColor}"></span>
+                        <span class="swatch" th:style="'background:' + ${tpl.secondaryColor}"></span>
+                        <span class="swatch" th:style="'background:' + ${tpl.textColor}"></span>
+                        <span style="font-size:11px;color:var(--text-muted);margin-left:4px;" th:text="${tpl.layout}">VERTICAL</span>
+                    </div>
+                    <p style="font-size:11px;color:var(--text-muted);margin-top:4px;font-style:italic;"
+                       th:text="${tpl.tagline}">Tagline</p>
+                    <div style="display:flex;gap:8px;margin-top:12px;">
+                        <a th:href="@{'/templates/' + ${tpl.id} + '/edit'}"
+                           class="btn btn-outline btn-sm">✏️ Edit</a>
+                        <form th:action="@{'/templates/' + ${tpl.id} + '/delete'}" method="post"
+                              onsubmit="return confirm('Delete this template?')">
+                            <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create New Template Form -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Create New Template</h3>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/templates}" method="post" th:object="${newTemplate}">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="code">Code (unique) *</label>
+                            <input id="code" type="text" class="form-control" name="code"
+                                   placeholder="e.g. BLUE_DARK" required/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="name">Name *</label>
+                            <input id="name" type="text" class="form-control" name="name"
+                                   placeholder="e.g. Navy Blue" required/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="organizationName">Organization Name</label>
+                            <input id="organizationName" type="text" class="form-control"
+                                   name="organizationName" placeholder="e.g. ITC University"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="layout">Layout</label>
+                            <select id="layout" class="form-control" name="layout">
+                                <option value="VERTICAL">VERTICAL</option>
+                                <option value="HORIZONTAL">HORIZONTAL</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="primaryColor">Primary Color</label>
+                            <input id="primaryColor" type="color" class="form-control"
+                                   name="primaryColor" value="#1d4ed8" style="height:42px;padding:4px;"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="secondaryColor">Secondary Color</label>
+                            <input id="secondaryColor" type="color" class="form-control"
+                                   name="secondaryColor" value="#e0e7ff" style="height:42px;padding:4px;"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="textColor">Text Color</label>
+                            <input id="textColor" type="color" class="form-control"
+                                   name="textColor" value="#111827" style="height:42px;padding:4px;"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="tagline">Tagline</label>
+                            <input id="tagline" type="text" class="form-control"
+                                   name="tagline" placeholder="e.g. Excellence in Technology"/>
+                        </div>
+                    </div>
+                    <div style="margin-top:20px;">
+                        <button type="submit" class="btn btn-primary">🎨 Create Template</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

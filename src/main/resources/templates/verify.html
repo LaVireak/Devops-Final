@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Verify ID Card — ID Card Manager</title>
+    <meta name="description" content="Verify an ID card by scanning its QR code."/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h2>🪪 IDCard Manager</h2>
+            <p>Student &amp; Employee Cards</p>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a th:href="@{/}"><span class="icon">🏠</span> Dashboard</a></li>
+            <li><a th:href="@{/profiles}"><span class="icon">👤</span> Profiles</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="verify-container">
+
+            <!-- Valid Card -->
+            <div th:if="${valid}" class="card">
+                <div class="card-body" style="text-align:center;padding:36px;">
+                    <div class="verify-badge verify-valid">✅</div>
+                    <h2 style="margin-bottom:4px;">Card Verified</h2>
+                    <p style="color:var(--text-muted);margin-bottom:24px;">This ID card is authentic.</p>
+
+                    <div style="text-align:left;background:var(--bg-card2);border-radius:var(--radius);padding:20px;margin-bottom:20px;">
+                        <table style="width:100%;">
+                            <tr><th style="width:40%;color:var(--text-muted);font-weight:500;padding:6px 0;border:none;">Name</th>
+                                <td style="border:none;padding:6px 0;" th:text="${profile.fullName}">-</td></tr>
+                            <tr><th style="color:var(--text-muted);font-weight:500;padding:6px 0;border:none;">ID</th>
+                                <td style="border:none;padding:6px 0;font-family:monospace;" th:text="${profile.registrationNumber}">-</td></tr>
+                            <tr><th style="color:var(--text-muted);font-weight:500;padding:6px 0;border:none;">Type</th>
+                                <td style="border:none;padding:6px 0;" th:text="${profile.type}">-</td></tr>
+                            <tr th:if="${profile.department != null}">
+                                <th style="color:var(--text-muted);font-weight:500;padding:6px 0;border:none;">Dept</th>
+                                <td style="border:none;padding:6px 0;" th:text="${profile.department}">-</td></tr>
+                            <tr th:if="${profile.title != null}">
+                                <th style="color:var(--text-muted);font-weight:500;padding:6px 0;border:none;">Title</th>
+                                <td style="border:none;padding:6px 0;" th:text="${profile.title}">-</td></tr>
+                            <tr th:if="${profile.expiryDate != null}">
+                                <th style="color:var(--text-muted);font-weight:500;padding:6px 0;border:none;">Expiry</th>
+                                <td style="border:none;padding:6px 0;"
+                                    th:text="${#temporals.format(profile.expiryDate,'dd/MM/yyyy')}">-</td></tr>
+                        </table>
+                    </div>
+
+                    <a th:href="@{/profiles}" class="btn btn-outline">← Back to Profiles</a>
+                </div>
+            </div>
+
+            <!-- Invalid Card -->
+            <div th:unless="${valid}" class="card">
+                <div class="card-body" style="text-align:center;padding:36px;">
+                    <div class="verify-badge verify-invalid">❌</div>
+                    <h2 style="margin-bottom:4px;">Card Not Found</h2>
+                    <p style="color:var(--text-muted);margin-bottom:24px;"
+                       th:text="${error ?: 'This QR code does not match any registered ID card.'}">Error</p>
+                    <a th:href="@{/}" class="btn btn-outline">← Go Home</a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+</body>
+</html>

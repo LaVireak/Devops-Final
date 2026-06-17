@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Edit Template — ID Card Manager</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h2>🪪 IDCard Manager</h2>
+            <p>Student &amp; Employee Cards</p>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a th:href="@{/}"><span class="icon">🏠</span> Dashboard</a></li>
+            <li><a th:href="@{/profiles}"><span class="icon">👤</span> Profiles</a></li>
+            <li><a th:href="@{/templates}" class="active"><span class="icon">🎨</span> Templates</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1>Edit Template</h1>
+                <p th:text="'Editing: ' + ${template.name}">Editing</p>
+            </div>
+            <a th:href="@{/templates}" class="btn btn-outline">← Back</a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form th:action="@{'/templates/' + ${template.id} + '/update'}" method="post"
+                      th:object="${template}">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Code</label>
+                            <input type="text" class="form-control" th:field="*{code}" readonly
+                                   style="opacity:.6;cursor:not-allowed;"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="eName">Name *</label>
+                            <input id="eName" type="text" class="form-control" th:field="*{name}" required/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="eOrg">Organization Name</label>
+                            <input id="eOrg" type="text" class="form-control" th:field="*{organizationName}"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="eLayout">Layout</label>
+                            <select id="eLayout" class="form-control" th:field="*{layout}">
+                                <option value="VERTICAL">VERTICAL</option>
+                                <option value="HORIZONTAL">HORIZONTAL</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="ePrimary">Primary Color</label>
+                            <input id="ePrimary" type="color" class="form-control" th:field="*{primaryColor}"
+                                   style="height:42px;padding:4px;"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="eSecondary">Secondary Color</label>
+                            <input id="eSecondary" type="color" class="form-control" th:field="*{secondaryColor}"
+                                   style="height:42px;padding:4px;"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="eText">Text Color</label>
+                            <input id="eText" type="color" class="form-control" th:field="*{textColor}"
+                                   style="height:42px;padding:4px;"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="eTagline">Tagline</label>
+                            <input id="eTagline" type="text" class="form-control" th:field="*{tagline}"/>
+                        </div>
+                    </div>
+                    <div style="margin-top:20px;display:flex;gap:12px;">
+                        <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+                        <a th:href="@{/templates}" class="btn btn-outline">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

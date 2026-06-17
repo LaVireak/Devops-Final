@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Profiles — ID Card Manager</title>
+    <meta name="description" content="View, search and manage ID card profiles."/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h2>🪪 IDCard Manager</h2>
+            <p>Student &amp; Employee Cards</p>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a th:href="@{/}"><span class="icon">🏠</span> Dashboard</a></li>
+            <li><a th:href="@{/profiles}" class="active"><span class="icon">👤</span> Profiles</a></li>
+            <li><a th:href="@{/profiles/new}"><span class="icon">➕</span> New Profile</a></li>
+            <li><a th:href="@{/templates}"><span class="icon">🎨</span> Templates</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1>Profiles</h1>
+                <p th:text="'Total: ' + ${profiles.totalElements} + ' profiles'">Total profiles</p>
+            </div>
+            <a th:href="@{/profiles/new}" class="btn btn-primary">➕ New Profile</a>
+        </div>
+
+        <!-- Flash message -->
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+        <!-- Search -->
+        <form method="get" th:action="@{/profiles}" class="search-bar">
+            <input id="searchInput" type="text" name="search" class="form-control"
+                   placeholder="🔍 Search by name…" th:value="${search}"/>
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a th:href="@{/profiles}" class="btn btn-outline">Clear</a>
+            <a href="/batch/pdf" class="btn btn-outline" style="margin-left:auto;">📦 Export All ZIP</a>
+        </form>
+
+        <!-- Profile Grid -->
+        <div class="profile-grid" th:if="${profiles.content.size() > 0}">
+            <a th:each="p : ${profiles.content}"
+               th:href="@{'/profiles/' + ${p.id} + '/preview'}"
+               class="profile-card">
+                <div class="profile-card-header"
+                     th:style="'background:' + (${p.templatePrimaryColor} ?: '#6366f1')"></div>
+                <div class="profile-card-body">
+                    <div class="profile-avatar"
+                         th:if="${p.photoUrl == null}"
+                         th:text="${#strings.substring(p.fullName, 0, 1)}">A</div>
+                    <img class="profile-avatar" th:if="${p.photoUrl != null}"
+                         th:src="${p.photoUrl}" th:alt="${p.fullName}"/>
+                    <div class="profile-name" th:text="${p.fullName}">Name</div>
+                    <div class="profile-sub" th:text="${p.title ?: p.department ?: '-'}">Title</div>
+                    <span class="profile-badge"
+                          th:classappend="${p.type.name() == 'STUDENT'} ? 'badge-student' : (${p.type.name() == 'EMPLOYEE'} ? 'badge-employee' : 'badge-user')"
+                          th:text="${p.type.name()}">TYPE</span>
+                </div>
+                <div class="profile-card-footer">
+                    <span class="profile-reg" th:text="${p.registrationNumber}">REG</span>
+                    <div style="display:flex;gap:6px;" onclick="event.preventDefault()">
+                        <a th:href="@{'/profiles/' + ${p.id} + '/edit'}" class="btn btn-outline btn-sm btn-icon">✏️</a>
+                        <form th:action="@{'/profiles/' + ${p.id} + '/delete'}" method="post"
+                              onsubmit="return confirm('Delete this profile?')">
+                            <button type="submit" class="btn btn-danger btn-sm btn-icon">🗑️</button>
+                        </form>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Empty state -->
+        <div th:if="${profiles.content.size() == 0}" class="card">
+            <div class="card-body" style="text-align:center;padding:48px;">
+                <div style="font-size:48px;margin-bottom:12px;">📭</div>
+                <h3 style="margin-bottom:8px;">No profiles found</h3>
+                <p style="color:var(--text-muted);margin-bottom:20px;">
+                    <span th:if="${search != null}">No results for "<span th:text="${search}"></span>"</span>
+                    <span th:if="${search == null}">Create your first profile to get started.</span>
+                </p>
+                <a th:href="@{/profiles/new}" class="btn btn-primary">➕ Create Profile</a>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" th:if="${totalPages > 1}">
+            <a th:href="@{/profiles(page=0, search=${search})}" class="page-btn">«</a>
+            <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+               th:href="@{/profiles(page=${i}, search=${search})}"
+               class="page-btn"
+               th:classappend="${i == currentPage} ? 'active'"
+               th:text="${i + 1}">1</a>
+            <a th:href="@{/profiles(page=${totalPages - 1}, search=${search})}" class="page-btn">»</a>
+        </div>
+    </main>
+</div>
+</body>
+</html>

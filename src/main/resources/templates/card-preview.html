@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${profile.fullName} + ' — ID Card Preview'">ID Card Preview</title>
+    <meta name="description" content="Live ID card preview for the selected profile."/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <style>
+        /* Extra styles for this page */
+        body { background: var(--bg-dark); }
+    </style>
+</head>
+<body>
+<div class="app-wrapper">
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h2>🪪 IDCard Manager</h2>
+            <p>Student &amp; Employee Cards</p>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a th:href="@{/}"><span class="icon">🏠</span> Dashboard</a></li>
+            <li><a th:href="@{/profiles}" class="active"><span class="icon">👤</span> Profiles</a></li>
+            <li><a th:href="@{/profiles/new}"><span class="icon">➕</span> New Profile</a></li>
+            <li><a th:href="@{/templates}"><span class="icon">🎨</span> Templates</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1>ID Card Preview</h1>
+                <p th:text="'Registration: ' + ${profile.registrationNumber}">Registration</p>
+            </div>
+            <a th:href="@{/profiles}" class="btn btn-outline">← Back</a>
+        </div>
+
+        <div class="preview-wrapper">
+
+            <!-- ══ The ID Card ══ -->
+            <div class="id-card"
+                 th:style="'background:' + (${profile.template?.secondaryColor} ?: '#e0e7ff')">
+
+                <!-- Header -->
+                <div class="id-card-header"
+                     th:style="'background:' + (${profile.template?.primaryColor} ?: '#1d4ed8')">
+                    <h3 th:text="${profile.template?.organizationName ?: 'ITC University'}">Org Name</h3>
+                    <p th:text="${profile.template?.tagline ?: ''}">Tagline</p>
+                </div>
+
+                <!-- Body -->
+                <div class="id-card-body">
+                    <!-- Photo -->
+                    <div class="id-card-photo"
+                         th:style="'background:' + (${profile.template?.primaryColor} ?: '#1d4ed8') + '33'">
+                        <img th:if="${profile.hasPhoto()}"
+                             th:src="@{'/profiles/' + ${profile.id} + '/photo'}"
+                             th:alt="${profile.fullName}"
+                             style="width:100%;height:100%;object-fit:cover;"/>
+                        <span th:unless="${profile.hasPhoto()}" style="font-size:32px;">👤</span>
+                    </div>
+
+                    <!-- Info -->
+                    <div class="id-card-info"
+                         th:style="'color:' + (${profile.template?.textColor} ?: '#111827')">
+                        <div class="name" th:text="${profile.fullName}">Name</div>
+                        <div class="role"
+                             th:text="${profile.title ?: profile.type.name()}">Title</div>
+                        <div class="detail" th:if="${profile.department != null}"
+                             th:text="'Dept: ' + ${profile.department}">Dept</div>
+                        <div class="detail"
+                             th:text="'ID: ' + ${profile.registrationNumber}">ID</div>
+                        <div class="detail" th:if="${profile.email != null}"
+                             th:text="${profile.email}">Email</div>
+                        <div class="detail" th:if="${profile.phone != null}"
+                             th:text="${profile.phone}">Phone</div>
+                        <div class="detail" th:if="${profile.expiryDate != null}"
+                             th:text="'Exp: ' + ${#temporals.format(profile.expiryDate,'dd/MM/yyyy')}">Expiry</div>
+                    </div>
+                </div>
+
+                <!-- Footer: QR + Barcode -->
+                <div class="id-card-footer">
+                    <img th:src="@{'/profiles/' + ${profile.id} + '/qrcode'}"
+                         alt="QR Code" style="height:40px;width:40px;"/>
+                    <img th:src="@{'/profiles/' + ${profile.id} + '/barcode'}"
+                         alt="Barcode" style="height:32px;max-width:160px;"/>
+                </div>
+            </div>
+
+            <!-- ══ Actions Panel ══ -->
+            <div class="preview-actions">
+                <div class="action-group">
+                    <h4>Download</h4>
+                    <a th:href="@{'/profiles/' + ${profile.id} + '/pdf'}"
+                       class="btn btn-primary" style="margin-bottom:8px;">
+                        📄 Download PDF
+                    </a>
+                    <a th:href="@{'/profiles/' + ${profile.id} + '/qrcode'}"
+                       class="btn btn-outline" style="margin-bottom:8px;" download="qrcode.png">
+                        📱 Download QR Code
+                    </a>
+                    <a th:href="@{'/profiles/' + ${profile.id} + '/barcode'}"
+                       class="btn btn-outline" download="barcode.png">
+                        📊 Download Barcode
+                    </a>
+                </div>
+
+                <div class="action-group">
+                    <h4>Manage</h4>
+                    <a th:href="@{'/profiles/' + ${profile.id} + '/edit'}"
+                       class="btn btn-outline" style="margin-bottom:8px;">
+                        ✏️ Edit Profile
+                    </a>
+                    <form th:action="@{'/profiles/' + ${profile.id} + '/delete'}" method="post"
+                          onsubmit="return confirm('Delete this profile?')">
+                        <button type="submit" class="btn btn-danger" style="width:100%;">
+                            🗑️ Delete Profile
+                        </button>
+                    </form>
+                </div>
+
+                <div class="action-group">
+                    <h4>Upload Photo</h4>
+                    <input id="photoUpload" type="file" accept="image/jpeg,image/png"
+                           class="form-control" style="margin-bottom:8px;"
+                           onchange="uploadPhoto(this)"/>
+                    <p style="font-size:11px;color:var(--text-muted);">JPEG / PNG, max 5 MB</p>
+                </div>
+
+                <div class="action-group">
+                    <h4>Details</h4>
+                    <div style="font-size:12px;color:var(--text-muted);line-height:1.8;">
+                        <div>UUID: <code th:text="${profile.uuid}" style="font-size:10px;">-</code></div>
+                        <div>Type: <strong th:text="${profile.type}">-</strong></div>
+                        <div th:if="${profile.bloodGroup != null}">Blood: <strong th:text="${profile.bloodGroup}">-</strong></div>
+                        <div th:if="${profile.dateOfBirth != null}"
+                             th:text="'DOB: ' + ${#temporals.format(profile.dateOfBirth,'dd/MM/yyyy')}">DOB</div>
+                        <div th:text="'Barcode: ' + ${profile.barcodeType}">Barcode</div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- end preview-wrapper -->
+    </main>
+</div>
+
+<script th:inline="javascript">
+    function uploadPhoto(input) {
+        const profileId = /*[[${profile.id}]]*/ 0;
+        if (!input.files.length) return;
+        const fd = new FormData();
+        fd.append('file', input.files[0]);
+        fetch(`/profiles/${profileId}/photo`, { method: 'POST', body: fd })
+            .then(r => { if (!r.ok) return r.text().then(t => { throw t; }); return r.text(); })
+            .then(() => location.reload())
+            .catch(err => alert('Upload failed: ' + err));
+    }
+</script>
+</body>
+</html>

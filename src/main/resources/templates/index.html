@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ID Card Management System</title>
+    <meta name="description" content="Manage and generate ID cards for students, employees, and users."/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h2>🪪 IDCard Manager</h2>
+            <p>Student & Employee Cards</p>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a th:href="@{/}" class="active"><span class="icon">🏠</span> Dashboard</a></li>
+            <li><a th:href="@{/profiles}"><span class="icon">👤</span> Profiles</a></li>
+            <li><a th:href="@{/profiles/new}"><span class="icon">➕</span> New Profile</a></li>
+            <li><a th:href="@{/templates}"><span class="icon">🎨</span> Templates</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1>Dashboard</h1>
+                <p>Welcome to the ID Card Management System</p>
+            </div>
+            <a th:href="@{/profiles/new}" class="btn btn-primary">➕ New Profile</a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card stat-accent">
+                <span class="stat-label">Total Profiles</span>
+                <span class="stat-value" th:text="${totalProfiles ?: 0}">0</span>
+                <span class="stat-icon">👤</span>
+            </div>
+            <div class="stat-card stat-success">
+                <span class="stat-label">Students</span>
+                <span class="stat-value" th:text="${studentCount ?: 0}">0</span>
+                <span class="stat-icon">🎓</span>
+            </div>
+            <div class="stat-card stat-warning">
+                <span class="stat-label">Employees</span>
+                <span class="stat-value" th:text="${employeeCount ?: 0}">0</span>
+                <span class="stat-icon">💼</span>
+            </div>
+            <div class="stat-card stat-info">
+                <span class="stat-label">Templates</span>
+                <span class="stat-value" th:text="${templateCount ?: 0}">0</span>
+                <span class="stat-icon">🎨</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Quick Actions</h3>
+            </div>
+            <div class="card-body">
+                <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                    <a th:href="@{/profiles/new}" class="btn btn-primary">👤 Create Profile</a>
+                    <a th:href="@{/profiles}" class="btn btn-outline">📋 All Profiles</a>
+                    <a th:href="@{/templates}" class="btn btn-outline">🎨 Manage Templates</a>
+                    <a href="/batch/pdf" class="btn btn-outline">📦 Export All PDFs</a>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top:24px;" class="card">
+            <div class="card-header">
+                <h3>API Endpoints</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Method</th><th>Path</th><th>Description</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>GET</code></td><td><code>/api/profiles</code></td><td>List all profiles (paginated)</td></tr>
+                            <tr><td><code>POST</code></td><td><code>/api/profiles</code></td><td>Create a profile</td></tr>
+                            <tr><td><code>GET</code></td><td><code>/api/profiles/{id}</code></td><td>Get a profile</td></tr>
+                            <tr><td><code>PUT</code></td><td><code>/api/profiles/{id}</code></td><td>Update a profile</td></tr>
+                            <tr><td><code>DELETE</code></td><td><code>/api/profiles/{id}</code></td><td>Delete a profile</td></tr>
+                            <tr><td><code>POST</code></td><td><code>/profiles/{id}/photo</code></td><td>Upload photo</td></tr>
+                            <tr><td><code>GET</code></td><td><code>/profiles/{id}/pdf</code></td><td>Download PDF</td></tr>
+                            <tr><td><code>GET</code></td><td><code>/profiles/{id}/qrcode</code></td><td>QR code PNG</td></tr>
+                            <tr><td><code>GET</code></td><td><code>/profiles/{id}/barcode</code></td><td>Barcode PNG</td></tr>
+                            <tr><td><code>POST</code></td><td><code>/batch/create</code></td><td>Batch create profiles</td></tr>
+                            <tr><td><code>GET</code></td><td><code>/batch/pdf</code></td><td>Download all cards ZIP</td></tr>
+                            <tr><td><code>GET</code></td><td><code>/verify/{uuid}</code></td><td>Verify card by UUID</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>
