@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     openssh-server \
     git \
     maven \
+    php-cli \
     curl \
     iproute2 \
     && rm -rf /var/lib/apt/lists/*
