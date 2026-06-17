@@ -41,6 +41,7 @@ pipeline {
                        Check console output at: ${env.BUILD_URL}
                        
                        Failed commit authors/culprits will find the logs on Jenkins.""",
+                to: 'lavireak9@gmail.com',
                 recipientProviders: [
                     [$class: 'CulpritsRecipientProvider'],
                     [$class: 'DevelopersRecipientProvider']
