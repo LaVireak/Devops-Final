@@ -2,6 +2,9 @@
 - name: Deploy and Manage Spring Boot ID Card System
   hosts: webservers
   gather_facts: false
+  environment:
+    JAVA_HOME: /opt/java/openjdk
+    PATH: /opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
   tasks:
     - name: Ensure git repository is clean (discard local changes)
       ansible.builtin.shell:
