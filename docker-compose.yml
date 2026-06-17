@@ -29,6 +29,20 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
 
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    environment:
+      - PMA_HOST=B-LA_VIREAK-db
+      - PMA_PORT=3306
+      - MYSQL_ROOT_PASSWORD=Hello@123
+    ports:
+      - "8081:80"
+    networks:
+      - devops-network
+    depends_on:
+      - B-LA_VIREAK-db
+
 networks:
   devops-network:
     driver: bridge
