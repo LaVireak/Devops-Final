@@ -35,11 +35,16 @@ jobs:
 
       - name: Run Ansible Playbook (Deploy)
         run: |
-          # SSH connection details are defined in hosts.ini
-          ansible-playbook -i hosts.ini playbook.yml
+          # Check if local container SSH port 2222 is open (only available in local environment)
+          if nc -z -w 3 127.0.0.1 2222; then
+            ansible-playbook -i hosts.ini playbook.yml
+          else
+            echo "Port 2222 is unreachable. Skipping Ansible deployment on GitHub Cloud runner."
+          fi
 
       - name: Send Email Notification on Failure
         if: failure()
+        continue-on-error: true
         uses: dawidd6/action-send-mail@v3
         with:
           # SMTP configuration (secrets set up in GitHub Repository Settings)
