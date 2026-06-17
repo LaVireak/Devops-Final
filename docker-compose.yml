@@ -1,0 +1,35 @@
+services:
+  web-server:
+    build: .
+    container_name: web-server
+    ports:
+      - "8443:8080" # Map host 8443 to container NGINX 8080
+      - "2222:22"   # Map host 2222 to container SSH 22
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://B-LA_VIREAK-db:3306/B-LA_VIREAK-db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Hello@123
+    depends_on:
+      - B-LA_VIREAK-db
+    networks:
+      - devops-network
+
+  B-LA_VIREAK-db:
+    image: mysql:8.0
+    container_name: B-LA_VIREAK-db
+    environment:
+      - MYSQL_DATABASE=B-LA_VIREAK-db
+      - MYSQL_ROOT_PASSWORD=Hello@123
+    ports:
+      - "3306:3306"
+    networks:
+      - devops-network
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+networks:
+  devops-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
