@@ -1,0 +1,33 @@
+---
+- name: Deploy and Manage Spring Boot ID Card System
+  hosts: webservers
+  gather_facts: false
+  tasks:
+    - name: Ensure git repository is clean (discard local changes)
+      ansible.builtin.shell:
+        cmd: git reset --hard
+        chdir: /app
+
+    - name: Pull latest code from GitHub
+      ansible.builtin.shell:
+        cmd: git pull
+        chdir: /app
+
+    - name: Build Spring Boot project (skip tests)
+      ansible.builtin.shell:
+        cmd: mvn clean package -DskipTests
+        chdir: /app
+
+    - name: Run Maven tests (against SQLite test DB)
+      ansible.builtin.shell:
+        cmd: mvn test
+        chdir: /app
+      register: test_output
+
+    - name: Print test execution output
+      ansible.builtin.debug:
+        var: test_output.stdout_lines
+
+    - name: Backup the MySQL database (B-LA_VIREAK-db)
+      ansible.builtin.shell:
+        cmd: mysqldump -h B-LA_VIREAK-db -u root -pHello@123 B-LA_VIREAK-db > /app/backup.sql
