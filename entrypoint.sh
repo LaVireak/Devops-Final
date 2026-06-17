@@ -46,4 +46,4 @@ echo "MySQL database is ready!"
 
 # Start the Spring Boot application, binding to 127.0.0.1:8080 (so NGINX can proxy it on CONTAINER_IP:8080)
 echo "Starting Spring Boot application..."
-java -Dserver.address=127.0.0.1 -Dserver.port=8080 -jar target/idcard-system-0.0.1-SNAPSHOT.jar
+java -Dserver.address=127.0.0.1 -Dserver.port=8080 -jar target/idcard-0.0.1-SNAPSHOT.jar
